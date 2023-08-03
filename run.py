@@ -9,14 +9,14 @@ f = [
 ]
 
 z = open('all.hosts', 'w')
-z.write('[Hosts]\n\n')
+z.write('[Host]\n\n')
 
 for i in f:
     s = i[:i.rfind('.')]
     a = open(s + '.txt', 'w')
     b = open(s + '.conf', 'w')
     c = open(s + '.hosts', 'w')
-    c.write('[Hosts]\n\n')
+    c.write('[Host]\n\n')
     for l in urlopen(p + i):
         l = l.decode()
         if l.startswith('server'):
