@@ -16,7 +16,7 @@ for i in f:
     a = open(s + '.txt', 'w')
     b = open(s + '.conf', 'w')
     c = open(s + '.hosts', 'w')
-    c.write('[Hosts]\n\n')
+    c.write('[Host]\n\n')
     for l in urlopen(p + i):
         l = l.decode()
         if l.startswith('server'):
