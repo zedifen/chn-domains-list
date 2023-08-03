@@ -9,7 +9,7 @@ f = [
 ]
 
 z = open('all.hosts', 'w')
-z.write('[Hosts]\n\n')
+z.write('[Host]\n\n')
 
 for i in f:
     s = i[:i.rfind('.')]
