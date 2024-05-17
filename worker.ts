@@ -132,12 +132,12 @@ export default {
         return putCache(new Response(servers.flat().join('\n'), {headers}));
       case '.conf': {
         return putCache(new Response(
-          'DOMAIN-SUFFIX,' + servers.flat().join('\nDOMAIN-SUFFIX,') + '\n',
+          servers.flat().map(n => `DOMAIN-SUFFIX,${n}\n`).join(''),
           { headers },
         ));
       }
       case '.list': {
-        return putCache(new Response('.' + servers.flat().join('\n.') + '\n', {headers}));
+        return putCache(new Response(servers.flat().map(n => `.${n}\n`).join(''), {headers}));
       }
       case '.hosts': {
         return putCache(new Response(
