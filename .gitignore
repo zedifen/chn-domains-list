@@ -1,6 +1,7 @@
 *.txt
 *.conf
 *.hosts
+*.list
 
 .wrangler/
 node_modules/
