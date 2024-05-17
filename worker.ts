@@ -95,9 +95,9 @@ export default {
       return new Response(messages.join('\n\n'), {status: 400});
     }
 
-    const items: [number, number, number][] = [];
+    const slices: [number, number, number][] = [];
     const texts: Uint8Array[] = [];
-    let itemsLength = 0;
+    let slicesTotalLength = 0;
     let textN = 0;
     const returnCharCode = '\n'.charCodeAt(0);
     const dotCharCode = '.'.charCodeAt(0);
@@ -129,8 +129,8 @@ export default {
           while (text[i] != slashCode /* && i < text.length && text[i] != '\n'.charCodeAt(0) */) i += 1;
           const b = i;
           i += 1;
-          items.push([textN, a, b]);
-          itemsLength += (b - a);
+          slices.push([textN, a, b]);
+          slicesTotalLength += (b - a);
         }
         while (text[i] != returnCharCode && i < text.length) i += 1;
         i += 1;
@@ -154,9 +154,9 @@ export default {
     // handle resource generating for different formats (suffixes)
     switch (suffix) {
       case '.txt': {
-        const a = new Uint8Array(itemsLength + items.length);
+        const a = new Uint8Array(slicesTotalLength + slices.length);
         let i = 0;
-        for (const [n, x, y] of items) {
+        for (const [n, x, y] of slices) {
           for (let q = x; q < y; q += 1) { a[i++] = texts[n][q]; }
           a[i++] = returnCharCode;
         }
@@ -164,9 +164,9 @@ export default {
       }
       case '.conf': {
         const prefix = 'DOMAIN-SUFFIX,'.split('').map(i => i.charCodeAt(0));
-        const a = new Uint8Array(itemsLength + (prefix.length + 1) * items.length);
+        const a = new Uint8Array(slicesTotalLength + (prefix.length + 1) * slices.length);
         let i = 0;
-        for (const [n, x, y] of items) {
+        for (const [n, x, y] of slices) {
           for (const c of prefix) { a[i++] = c; }
           for (let q = x; q < y; q += 1) { a[i++] = texts[n][q]; }
           a[i++] = returnCharCode;
@@ -174,9 +174,9 @@ export default {
         return putCache(new Response(a, {headers}));
       }
       case '.list': {
-        const a = new Uint8Array(itemsLength + 2 * items.length);
+        const a = new Uint8Array(slicesTotalLength + 2 * slices.length);
         let i = 0;
-        for (const [n, x, y] of items) {
+        for (const [n, x, y] of slices) {
           a[i++] = dotCharCode;
           for (let q = x; q < y; q += 1) { a[i++] = texts[n][q]; }
           a[i++] = returnCharCode;
@@ -187,10 +187,10 @@ export default {
         const s = '[Host]\n\n'.split('').map(i => i.charCodeAt(0));
         const p = ' = server:system\n'.split('').map(i => i.charCodeAt(0));
         const q = '+.'.split('').map(i => i.charCodeAt(0));
-        const a = new Uint8Array(s.length + itemsLength * 2 + (2 * p.length + q.length) * items.length);
+        const a = new Uint8Array(s.length + slicesTotalLength * 2 + (2 * p.length + q.length) * slices.length);
         let i = 0;
         for (const c of s) { a[i++] = c; }
-        for (const [n, x, y] of items) {
+        for (const [n, x, y] of slices) {
           for (let q = x; q < y; q += 1) { a[i++] = texts[n][q]; }
           for (const c of p) { a[i++] = c; }
           for (const c of q) { a[i++] = c; }
