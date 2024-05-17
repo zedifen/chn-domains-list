@@ -105,7 +105,7 @@ export default {
     // fetching from upstream
     for (const n of (
       name == 'all'
-      ? ['accelerated-domains.china', 'google.china', 'apple.china'] 
+      ? ['accelerated-domains.china', 'apple.china', 'google.china'] 
       : [name]
     )) {
       const src = await fetch(`${UPSTREAM_SOURCES_ROOT}${n}.conf`);
