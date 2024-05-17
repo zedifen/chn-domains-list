@@ -108,7 +108,7 @@ export default {
       ? ['accelerated-domains.china', 'google.china', 'apple.china'] 
       : [name]
     )) {
-      const src = await fetch(`${UPSTREAM_SOURCES_ROOT}${name}.conf`);
+      const src = await fetch(`${UPSTREAM_SOURCES_ROOT}${n}.conf`);
       const text = new Uint8Array(await src.arrayBuffer());
       // pre-processing response
       let i = 0;
