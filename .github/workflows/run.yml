@@ -18,7 +18,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run
-        run: python3 run.py
+        env:
+          CLOUDFLARE_WORKERS_DOMAIN: ${{ secrets.CLOUDFLARE_WORKERS_DOMAIN }}
+        run: |
+          python3 run.py
+          for name in CHN CHN.GOOG CHN.AAPL CHN.ALL   # accelerated-domains apple.china google.china all
+          do
+            for suffix in .list .txt .conf .hosts
+            do
+              curl -sSL "https://${CLOUDFLARE_WORKERS_DOMAIN}/chn-domains-list/${name}${suffix}" -o "${name}${suffix}"
+            done
+          done
+          sha256sum CHN.*
+          sha256sum accelerated-domains.china.*
+          sha256sum apple.china.*
+          sha256sum google.china.*
+          sha256sum all.*
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -28,3 +43,4 @@ jobs:
             *.txt
             *.conf
             *.hosts
+            *.list

@@ -1,5 +1,6 @@
 
 export interface Env {
+  CODE_SOURCE_URL_ROOT: string;
 }
 
 export default {
@@ -30,6 +31,20 @@ export default {
       url.pathname = url.pathname.slice(PATH_PREFIX.length - 1);
     }
 
+    if (url.pathname.slice(1) == 'main/worker.ts' || url.pathname.slice(1) == 'alternative/worker.ts') {
+      if (!env.CODE_SOURCE_URL_ROOT) {
+        return new Response('Environment variable `CODE_SOURCE_URL_ROOT` is not set.', {status: 404});
+      }
+      try {
+        const r = await fetch(env.CODE_SOURCE_URL_ROOT + url.pathname.slice(1));
+        return new Response(r.body, {
+          headers: {'Content-Type': 'text/plain; charset=utf-8'},
+        });
+      } catch (e) {
+        return new Response('Failed to fetch source code.', {status: 400});
+      }
+    }
+
     const UPSTREAM_SOURCES_ROOT = 'https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/';
 
     const NAME_ALIAS: {[s: string]: string} = {
@@ -57,8 +72,12 @@ export default {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>CHN Domains List</title>
+        <meta name="description" content="Inspired by fernvenue's multi-formatted CHN domains list, but powered by Cloudflare Workers. Source data from felixonmars's dnsmasq-china-list.">
         <style> @media (prefers-color-scheme: dark) { body { background-color: black; color: darkgray; } } </style>
       </head>
+      <h1>CHN Domains List</h1>
+      <p>Powered by Cloudflare Workers. Source code: <a href="./main/worker.ts">main</a> / <a href="./alternative/worker.ts">alternative</a>.</p>
+      <p>Inspired by <a href="https://github.com/fernvenue/chn-domains-list">chn-domains-list</a>, using <a href="https://github.com/felixonmars/dnsmasq-china-list">felixonmars's dnsmasq-china-list</a> as upstream.</p>
       <body><p>Avaliable resources:</p>
       <ul>${listItems.join('')}</ul>
       </body>
@@ -76,7 +95,7 @@ export default {
     const suffix = pathnameLastDotPos != -1 ? url.pathname.slice(pathnameLastDotPos) : '';
 
     // generating cache key from normalized url
-    const cacheKey = new Request(new URL(name + suffix, 'https://chn-domains-list.hw388.workers.dev'), request);
+    const cacheKey = new Request(new URL(name + suffix, url.origin), request);
     const cachedResponse = await caches.default.match(cacheKey);
 
     // not returning from cache if 'noCache' presents (regardless of its value)
@@ -100,7 +119,7 @@ export default {
     // fetching from upstream
     for (const n of (
       name == 'all'
-      ? ['accelerated-domains.china', 'google.china', 'apple.china'] 
+      ? ['accelerated-domains.china', 'apple.china', 'google.china'] 
       : [name]
     )) {
       const src = await fetch(`${UPSTREAM_SOURCES_ROOT}${n}.conf`);
