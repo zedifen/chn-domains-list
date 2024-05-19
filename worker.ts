@@ -72,8 +72,12 @@ export default {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>CHN Domains List</title>
+        <meta name="description" content="Inspired by fernvenue's multi-formatted CHN domains list, but powered by Cloudflare Workers. Source data from felixonmars's dnsmasq-china-list.">
         <style> @media (prefers-color-scheme: dark) { body { background-color: black; color: darkgray; } } </style>
       </head>
+      <h1>CHN Domains List</h1>
+      <p>Powered by Cloudflare Workers. See also <a href="./worker.ts">source code</a>.</p>
+      <p>Inspired by <a href="https://github.com/fernvenue/chn-domains-list">chn-domains-list</a>, using <a href="https://github.com/felixonmars/dnsmasq-china-list">felixonmars's dnsmasq-china-list</a> as upstream.</p>
       <body><p>Avaliable resources:</p>
       <ul>${listItems.join('')}</ul>
       </body>
