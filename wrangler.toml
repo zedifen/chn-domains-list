@@ -3,4 +3,4 @@ main = "./worker.ts"
 compatibility_date = "2024-05-17"
 
 [vars]
-CODE_SOURCE_URL_ROOT = "https://raw.githubusercontent.com/zedifen/chn-domains-list/main/"
+CODE_SOURCE_URL_ROOT = "https://raw.githubusercontent.com/zedifen/chn-domains-list/"

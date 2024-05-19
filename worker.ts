@@ -31,12 +31,12 @@ export default {
       url.pathname = url.pathname.slice(PATH_PREFIX.length - 1);
     }
 
-    if (url.pathname.slice(1) == 'worker.ts') {
+    if (url.pathname.slice(1) == 'main/worker.ts' || url.pathname.slice(1) == 'alternative/worker.ts') {
       if (!env.CODE_SOURCE_URL_ROOT) {
         return new Response('Environment variable `CODE_SOURCE_URL_ROOT` is not set.', {status: 404});
       }
       try {
-        const r = await fetch(env.CODE_SOURCE_URL_ROOT + 'worker.ts');
+        const r = await fetch(env.CODE_SOURCE_URL_ROOT + url.pathname.slice(1));
         return new Response(r.body, {
           headers: {'Content-Type': 'text/plain; charset=utf-8'},
         });
@@ -76,7 +76,7 @@ export default {
         <style> @media (prefers-color-scheme: dark) { body { background-color: black; color: darkgray; } } </style>
       </head>
       <h1>CHN Domains List</h1>
-      <p>Powered by Cloudflare Workers. See also <a href="./worker.ts">source code</a>.</p>
+      <p>Powered by Cloudflare Workers. Source code: <a href="./main/worker.ts">main</a> / <a href="./alternative/worker.ts">alternative</a>.</p>
       <p>Inspired by <a href="https://github.com/fernvenue/chn-domains-list">chn-domains-list</a>, using <a href="https://github.com/felixonmars/dnsmasq-china-list">felixonmars's dnsmasq-china-list</a> as upstream.</p>
       <body><p>Avaliable resources:</p>
       <ul>${listItems.join('')}</ul>
