@@ -76,7 +76,7 @@ export default {
     const suffix = pathnameLastDotPos != -1 ? url.pathname.slice(pathnameLastDotPos) : '';
 
     // generating cache key from normalized url
-    const cacheKey = new Request(new URL(name + suffix, 'https://chn-domains-list.hw388.workers.dev'), request);
+    const cacheKey = new Request(new URL(name + suffix, url.origin), request);
     const cachedResponse = await caches.default.match(cacheKey);
 
     // not returning from cache if 'noCache' presents (regardless of its value)
