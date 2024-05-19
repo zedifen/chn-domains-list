@@ -1,5 +1,6 @@
 
 export interface Env {
+  CODE_SOURCE_URL_ROOT: string;
 }
 
 export default {
@@ -28,6 +29,20 @@ export default {
     // strip path prefix
     if (url.pathname.startsWith(PATH_PREFIX)) {
       url.pathname = url.pathname.slice(PATH_PREFIX.length - 1);
+    }
+
+    if (url.pathname.slice(1) == 'worker.ts') {
+      if (!env.CODE_SOURCE_URL_ROOT) {
+        return new Response('Environment variable `CODE_SOURCE_URL_ROOT` is not set.', {status: 404});
+      }
+      try {
+        const r = await fetch(env.CODE_SOURCE_URL_ROOT + 'worker.ts');
+        return new Response(r.body, {
+          headers: {'Content-Type': 'text/plain; charset=utf-8'},
+        });
+      } catch (e) {
+        return new Response('Failed to fetch source code.', {status: 400});
+      }
     }
 
     const UPSTREAM_SOURCES_ROOT = 'https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/';
